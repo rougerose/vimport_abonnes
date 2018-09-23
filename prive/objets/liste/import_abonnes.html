@@ -1,0 +1,32 @@
+[(#SET{defaut_tri,#ARRAY{
+	nom,1,
+	id_import_abonne,1,
+	points,-1
+}})]<B_liste_import_abonnes>
+#ANCRE_PAGINATION
+<div class="liste-objets import_abonnes">
+<table class="spip liste">
+	[<caption><strong class="caption">(#ENV*{titre,#GRAND_TOTAL|singulier_ou_pluriel{import_abonne:info_1_import_abonne,import_abonne:info_nb_import_abonnes}})</strong></caption>]
+	<thead>
+		<tr class="first_row">
+			<th class="nom" scope="col">[(#TRI{nom,<:import_abonne:champ_nom_label:>,ajax})]</th>
+			<th class="id" scope="col">[(#TRI{id_import_abonne,<:info_numero_abbreviation:>,ajax})]</th>
+		</tr>
+	</thead>
+	<tbody>
+	<BOUCLE_liste_import_abonnes(IMPORT_ABONNES){id_auteur?}{id_abonnement?}{id_mot?}{id_auteur?}{where?}{recherche?}{tri #ENV{par,num nom},#GET{defaut_tri}}{par nom}{pagination #ENV{nb,10}}>
+		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
+			<td class="nom principale"><a href="[(#ID_IMPORT_ABONNE|generer_url_entite{import_abonne})]" title="<:info_numero_abbreviation|attribut_html:> #ID_IMPORT_ABONNE">#NOM</a></td>
+			<td class="id">[(#AUTORISER{modifier,import_abonne,#ID_IMPORT_ABONNE}|?{
+				<a href="[(#URL_ECRIRE{import_abonne,id_import_abonne=#ID_IMPORT_ABONNE})]">#ID_IMPORT_ABONNE</a>,
+				#ID_IMPORT_ABONNE
+			})]</td>
+		</tr>
+	</BOUCLE_liste_import_abonnes>
+	</tbody>
+</table>
+[<p class="pagination">(#PAGINATION{prive})</p>]
+</div>
+</B_liste_import_abonnes>[
+<div class="liste-objets import_abonnes caption-wrap"><strong class="caption">(#ENV*{sinon,''})</strong></div>
+]<//B_liste_import_abonnes>
