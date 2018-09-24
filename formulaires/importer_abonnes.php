@@ -235,11 +235,9 @@ function formulaires_importer_abonnes_traiter_dist() {
 		
 		$abonnements_offre = sql_fetsel('*', 'spip_abonnements_offres', 'reference='.sql_quote($reference));
 		
-		// Numéro début et fin
-		$numero_debut = 'v' . str_pad($data['numero_debut'], 4, '0', STR_PAD_LEFT);
-		$numero_fin = 'v' . str_pad($data['numero_fin'], 4, '0', STR_PAD_LEFT);
-		
 		include_spip('inc/vabonnements_calculer_debut_fin');
+		$numero_debut = $data['numero_debut'];
+		$numero_fin = $data['numero_fin'];
 		$debut_fin = vabonnements_calculer_debut_fin($abonnements_offre['id_abonnements_offre'], $numero_debut);
 		
 		// Noter si le numéro de fin est incohérent entre les données 
@@ -286,10 +284,9 @@ function formulaires_importer_abonnes_traiter_dist() {
 			);
 		}
 		
-		if (
-			trim($numero_debut, 'v') <= trim($numero_encours, 'v') 
-				and trim($debut_fin['numero_fin'], 'v') >= trim($numero_encours, 'v')
-		) {
+
+		
+		if (($numero_debut <= $numero_encours and $numero_fin >= $numero_encours) or ($numero_debut >= $numero_encours and $numero_fin >= $numero_encours)) {
 			$statut = 'actif';
 		} else {
 			$statut = 'resilie';
