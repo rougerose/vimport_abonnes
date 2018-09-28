@@ -19,6 +19,8 @@ function formulaires_importer_abonnes_saisies_dist() {
 	return $saisies;
 }
 
+
+
 function formulaires_importer_abonnes_charger_dist() {
 	$valeurs = array(
 		'import_fichier' => '',
@@ -26,6 +28,8 @@ function formulaires_importer_abonnes_charger_dist() {
 	
 	return $valeurs;
 }
+
+
 
 function formulaires_importer_abonnes_verifier_dist() {
 	$erreurs = array();
@@ -36,6 +40,8 @@ function formulaires_importer_abonnes_verifier_dist() {
 	
 	return $erreurs;
 }
+
+
 
 function formulaires_importer_abonnes_traiter_dist() {
 	$res = array();
@@ -180,10 +186,10 @@ function formulaires_importer_abonnes_traiter_dist() {
 			$id_auteur = objet_inserer('auteur', null, $set_auteur);
 			$prenom = prenom($nom);
 			$nom = nom($nom);
-			
-			if ($id_auteur and $id_import_abonne) {
-				objet_modifier('import_abonnes', $id_import_abonne, array('id_auteur' => intval($id_auteur)));
-			}
+		}
+		
+		if ($id_auteur and $id_import_abonne) {
+			objet_modifier('import_abonnes', $id_import_abonne, array('id_auteur' => intval($id_auteur)));
 		}
 		
 		// Créer le contact
@@ -235,21 +241,28 @@ function formulaires_importer_abonnes_traiter_dist() {
 		
 		$abonnements_offre = sql_fetsel('*', 'spip_abonnements_offres', 'reference='.sql_quote($reference));
 		
-		include_spip('inc/vabonnements_calculer_debut_fin');
 		$numero_debut = $data['numero_debut'];
 		$numero_fin = $data['numero_fin'];
-		$debut_fin = vabonnements_calculer_debut_fin($abonnements_offre['id_abonnements_offre'], $numero_debut);
+		
+		// Date_debut et date_fin d'abonnement
+		include_spip('inc/vabonnements_calculer_date');
+		$dates_abonnement = vabonnements_calculer_dates($abonnements_offre['id_abonnements_offre'], $numero_debut);
+		
+		// Numero_fin calculé à partir de l'offre d'abonnement et du premier numéro
+		include_spip('inc/vnumeros');
+		$duree_nbre = intval($abonnements_offre['duree']);
+		$numero_fin_calcul = vnumeros_calculer_reference_numero_futur($duree_nbre, $numero_debut);
 		
 		// Noter si le numéro de fin est incohérent entre les données 
 		// importées et les données calculées.
-		if ($numero_fin != $debut_fin['numero_fin']) {
+		if ($numero_fin != $numero_fin_calcul) {
 			$res['erreurs'] = ++$er;
-			spip_log("Numéro de fin d'abonnement incohérent. Auteur #$id_auteur ; id_import_abonne #$id_import_abonne. Le numéro de fin d'abonnement importé : $numero_fin ; numéro de fin calculé : ".$debut_fin['numero_fin'], "import_abonnes"._LOG_ERREUR);
+			spip_log("Numéro de fin d'abonnement incohérent. Auteur #$id_auteur ; id_import_abonne #$id_import_abonne. Le numéro de fin d'abonnement importé : $numero_fin ; numéro de fin calculé : $numero_fin_calcul", "import_abonnes"._LOG_ERREUR);
 		}
 		
 		// Si la date d'abonnement est absente, utiliser la date de début
 		// d'abonnement calculée.
-		$date_abonnement = ($data['date_abonnement']) ? $data['date_abonnement'] : $debut_fin['date_debut'];
+		$date_abonnement = ($data['date_abonnement']) ? $data['date_abonnement'] : reset($dates_abonnement);
 		
 		// Log
 		include_spip('inc/vabonnements');
@@ -284,9 +297,11 @@ function formulaires_importer_abonnes_traiter_dist() {
 			);
 		}
 		
-
+		$maintenant = time();
+		$ddebut = strtotime(reset($dates_abonnement));
+		$dfin = strtotime(end($dates_abonnement));
 		
-		if (($numero_debut <= $numero_encours and $numero_fin >= $numero_encours) or ($numero_debut >= $numero_encours and $numero_fin >= $numero_encours)) {
+		if ($ddebut <= $maintenant and $dfin >= $maintenant) {
 			$statut = 'actif';
 		} else {
 			$statut = 'resilie';
@@ -296,10 +311,10 @@ function formulaires_importer_abonnes_traiter_dist() {
 			'id_abonnements_offre' => $abonnements_offre['id_abonnements_offre'],
 			'id_auteur' => $id_auteur,
 			'date' => $date_abonnement,
-			'date_debut' => $debut_fin['date_debut'],
-			'date_fin' => $debut_fin['date_fin'],
+			'date_debut' => reset($dates_abonnement),
+			'date_fin' => end($dates_abonnement),
 			'numero_debut' => $numero_debut,
-			'numero_fin' => $debut_fin['numero_fin'],
+			'numero_fin' => $numero_fin_calcul,
 			'duree_echeance' => $abonnements_offre['duree'],
 			'prix_echeance' => $abonnements_offre['prix_ht'],
 			'log' => $log_abonnement,
