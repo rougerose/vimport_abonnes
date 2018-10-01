@@ -83,7 +83,7 @@ function formulaires_importer_abonnes_traiter_dist() {
 		// montant ; date_abonnement ; paiement ; duree ; type_abonnement
 		// 
 		
-		unset($id_import_abonne, $id_doublon, $auteur, $id_auteur, $nom, $prenom, $email, $login, $set_auteur, $contact, $id_contact, $adresse, $id_adresse, $code_pays, $nom_pays, $numero_debut, $numero_fin, $pays, $date_abonnement, $debut_fin, $log_abonnement, $set_adresse, $set_abonnement, $reference, $abonnements_offre, $statut, $id_abonnement, $log);
+		unset($id_import_abonne, $id_doublon, $auteur, $id_auteur, $nom, $nom_base, $nom_import, $prenom_base, $prenom_import, $prenom, $email, $login, $set_auteur, $contact, $id_contact, $adresse, $id_adresse, $code_pays, $nom_pays, $numero_debut, $numero_fin, $numero_fin_calcul, $pays, $date_abonnement, $debut_fin, $ddebut, $dfin, $duree_nbre, $log_abonnement, $set_adresse, $set_abonnement, $reference, $abonnements_offre, $statut, $id_abonnement, $log);
 		
 		
 		$data = array_map('trim', $data);
