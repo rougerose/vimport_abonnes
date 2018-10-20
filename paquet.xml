@@ -1,0 +1,32 @@
+<paquet
+	prefix="vimport_abonnes"
+	categorie="auteur"
+	version="1.0.0"
+	etat="dev"
+	compatibilite="[3.2.1;3.2.*]"
+	logo="prive/themes/spip/images/vimport_abonnes-64.png"
+	documentation=""
+	schema="1.0.0" 
+>
+	<!--
+		Paquet généré le 2018-09-19 16:24:33
+	-->
+
+	<nom>Vacarme, importer des abonnés</nom>
+	<auteur>Christophe Le Drean</auteur>
+	<licence>GNU/GPL v3</licence>
+	
+	<necessite nom="saisies" compatibilite="[2.4.0;]" /> 
+	
+	<utilise nom="vprofils" />
+	<utilise nom="vabonnements" />
+	<utilise nom="contacts" />
+	<utilise nom="coordonnees" />
+	<utilise nom="pays" />
+	
+	<pipeline nom="autoriser" inclure="vimport_abonnes_autorisations.php" /> 
+
+	<pipeline nom="declarer_tables_objets_sql" inclure="base/vimport_abonnes.php" /> 
+	<pipeline nom="declarer_tables_interfaces" inclure="base/vimport_abonnes.php" /> 
+	<menu nom="importer_abonnes" titre="vimport_abonnes:vimport_abonnes_titre" parent="menu_administration"  icone="images/vimport_abonnes-16.png" />
+</paquet>

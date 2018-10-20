@@ -1,0 +1,16 @@
+<BOUCLE_import_abonne(IMPORT_ABONNES){id_import_abonne=#ENV{id}}>
+<div class="infos">
+[(#SET{texte_objet,<:import_abonne:titre_import_abonne:>})]
+<div class="numero"><:titre_cadre_numero_objet{objet=#GET{texte_objet}}:><p>#ID_IMPORT_ABONNE</p></div>
+
+	<div class='nb_elements'><!--nb_elements--></div>
+
+	[(#AUTORISER{supprimer, import_abonne, #ID_IMPORT_ABONNE}|oui)
+		[(#BOUTON_ACTION{
+			[(#CHEMIN_IMAGE{import_abonne-del-24.png}|balise_img{<:import_abonne:supprimer_import_abonne:>}|concat{' ',#VAL{<:import_abonne:supprimer_import_abonne:>}|wrap{<b>}}|trim)],
+			#URL_ACTION_AUTEUR{supprimer_import_abonne, #ID_IMPORT_ABONNE, #URL_ECRIRE{import_abonnes}},
+			icone s24 horizontale danger import_abonne-del-24, <:import_abonne:confirmer_supprimer_import_abonne:>})]
+	]
+
+</div>
+</BOUCLE_import_abonne>
